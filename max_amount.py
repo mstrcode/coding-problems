@@ -77,3 +77,33 @@ class Solution:
                 max_amount = max(max_amount, mx_reach_d2[initialCurrency])
 
         return max(max_amount,1)
+    
+# Best solution using bellmanford
+from collections import defaultdict
+from typing import List
+class Solution2:
+    def bellmanFord(self, best_reach: defaultdict, edges: List[List[str]], weights: List[float]) -> None:
+        """
+        params:
+            best_reach: is a dictionary having best value to reach a node, key is string as node and value is float as value to reach that node
+            edges: (From, To) type of edges
+            weights: rates in the current question context
+        """
+        for _ in range(len(edges)):
+            for i,edge in enumerate(edges):
+                u = edge[0]; v = edge[1]
+                # Consider edge u->v
+                best_reach[v] = max(best_reach[v], best_reach[u]*weights[i])
+                best_reach[u] = max(best_reach[u], best_reach[v]/weights[i])
+            # end for
+        # end for
+
+
+    def maxAmount(self, initialCurrency: str, pairs1: List[List[str]], rates1: List[float], pairs2: List[List[str]], rates2: List[float]) -> float:
+        """
+        """
+        best_reach = defaultdict(int)
+        best_reach[initialCurrency] = 1.0
+        self.bellmanFord(best_reach, pairs1, rates1)
+        self.bellmanFord(best_reach, pairs2, rates2)
+        return best_reach[initialCurrency]
